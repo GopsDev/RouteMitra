@@ -1,0 +1,25 @@
+{
+	"name": "RouteMitra – Field Sales",
+	"short_name": "RouteMitra",
+	"description": "RouteMitra: your field sales companion. Today's route, GPS check-in and shop visits.",
+	"start_url": "/routemitra",
+	"scope": "/",
+	"display": "standalone",
+	"orientation": "portrait",
+	"background_color": "#f3f5f7",
+	"theme_color": "#0e7c80",
+	"icons": [
+		{
+			"src": "/assets/routemitra/images/field-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/assets/routemitra/images/field-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
+}

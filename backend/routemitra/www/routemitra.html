@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="theme-color" content="#ffffff">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="RouteMitra">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="description" content="RouteMitra: today's route, GPS check-in and shop visits for field sales reps.">
+	<title>RouteMitra</title>
+	<link rel="manifest" href="/assets/routemitra/field_manifest.json">
+	<link rel="icon" href="/assets/routemitra/images/field-192.png">
+	<link rel="apple-touch-icon" href="/assets/routemitra/images/field-192.png">
+	{% if not get_app %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">{% endif %}
+	<link rel="stylesheet" href="/assets/routemitra/css/field_app.css?v={{ version }}">
+</head>
+<body>
+{% if get_app %}
+	<main class="get-app">
+		<div class="get-app-card">
+			<div class="brand">
+				<svg class="brand-mark" viewBox="0 0 32 40" aria-hidden="true">
+					<path class="brand-pin" d="M16 1C7.7 1 1 7.6 1 15.8 1 26.6 16 39 16 39s15-12.4 15-23.2C31 7.6 24.3 1 16 1Z"/>
+					<circle class="brand-hole" cx="16" cy="15.5" r="9.5"/>
+					<path class="brand-route" d="M10.5 20.5c1.6-3.4 3.4-1.8 5-4.8s3.6-1.6 5.6-5.2"/>
+					<circle class="brand-dot" cx="10.5" cy="20.5" r="1.8"/>
+					<circle class="brand-dot" cx="21.1" cy="10.5" r="1.8"/>
+				</svg>
+				<span class="brand-name">RouteMitra</span>
+			</div>
+			<h1>Use RouteMitra on your phone</h1>
+			<p class="get-app-sub">Hi {{ user_name }}, check-in needs your phone's GPS and camera, so field work is done in the RouteMitra mobile app, not on a laptop.</p>
+			{% if app_url %}
+			<img class="get-app-qr" src="{{ app_qr }}" alt="QR code for the app download link">
+			<p class="get-app-sub">Scan with your phone's camera to download the app.</p>
+			<a class="btn btn-primary btn-lg" href="{{ app_url }}">Download for Android</a>
+			{% else %}
+			<p class="notice-box">The app download link isn't set up yet. Ask your manager for the RouteMitra app.</p>
+			{% endif %}
+			<ol class="get-app-steps">
+				<li>Install the RouteMitra app on your Android phone.</li>
+				<li>Open it and enter the server: <b>{{ site_url }}</b></li>
+				<li>Log in with the same email and password you use here.</li>
+			</ol>
+			<button class="link-btn" id="logout">Log out</button>
+		</div>
+	</main>
+	<script>window.frappe = window.frappe || {};</script>
+	<!-- csrf_token -->
+	<script>
+		// Frappe only accepts logout as a POST.
+		document.getElementById("logout").onclick = async () => {
+			try {
+				await fetch("/api/method/logout", { method: "POST", headers: { "X-Frappe-CSRF-Token": window.frappe.csrf_token || "" } });
+			} catch (e) {
+				// The login page is the right place either way.
+			}
+			window.location.href = "/login";
+		};
+	</script>
+{% else %}
+	<header class="topbar">
+		<div class="brand">
+			<svg class="brand-mark" viewBox="0 0 32 40" aria-hidden="true">
+				<path class="brand-pin" d="M16 1C7.7 1 1 7.6 1 15.8 1 26.6 16 39 16 39s15-12.4 15-23.2C31 7.6 24.3 1 16 1Z"/>
+				<circle class="brand-hole" cx="16" cy="15.5" r="9.5"/>
+				<path class="brand-route" d="M10.5 20.5c1.6-3.4 3.4-1.8 5-4.8s3.6-1.6 5.6-5.2"/>
+				<circle class="brand-dot" cx="10.5" cy="20.5" r="1.8"/>
+				<circle class="brand-dot" cx="21.1" cy="10.5" r="1.8"/>
+			</svg>
+			<span class="brand-name">RouteMitra</span>
+		</div>
+		<div class="top-actions">
+			<button class="avatar-btn" id="avatar" aria-label="Your profile">?</button>
+			<button class="icon-btn" id="bell" aria-label="Updates">
+				<svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+				<span class="bell-dot hidden" id="bell-dot"></span>
+			</button>
+		</div>
+	</header>
+
+	<main id="app">
+		<div class="notice" id="notices"></div>
+
+		<section class="panel" id="panel-home">
+			<div class="datebar">
+				<span id="today-label">Today</span>
+				<span class="pill teal" id="rep-status">Field Rep · Active</span>
+			</div>
+
+			<div class="map-card">
+				<div id="map" aria-label="Map of today's route"></div>
+				<div class="map-chip hidden" id="map-chip"></div>
+				<div class="map-empty hidden" id="map-empty"></div>
+			</div>
+
+			<div class="main-actions">
+				<button class="btn btn-primary btn-lg" id="btn-checkin" disabled>
+					<svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-2.5 2.5M12 3l2.5 2.5"/></svg>
+					Check-In
+				</button>
+				<button class="btn btn-outline btn-lg" id="btn-checkout" disabled>Check-Out</button>
+			</div>
+			<p class="action-hint" id="action-hint"></p>
+
+			<section id="open-visit"></section>
+
+			<div class="section-head">
+				<h2>Sales Beat Plan</h2>
+				<span class="pill green hidden" id="plan-count"></span>
+			</div>
+			<div class="stop-list" id="home-stops">
+				<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+			</div>
+			<button class="link-btn see-all hidden" id="see-all"></button>
+
+			<section id="checks"></section>
+		</section>
+
+		<section class="panel hidden" id="panel-routes"></section>
+		<section class="panel hidden" id="panel-checkins"></section>
+		<section class="panel hidden" id="panel-profile"></section>
+	</main>
+
+	<nav class="tabbar" role="tablist">
+		<button class="tab active" data-tab="home" role="tab">
+			<svg viewBox="0 0 24 24"><path d="M12 21s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+			<span>Home</span>
+		</button>
+		<button class="tab" data-tab="routes" role="tab">
+			<svg viewBox="0 0 24 24"><circle cx="5" cy="17" r="2"/><circle cx="19" cy="7" r="2"/><path d="M6.5 15.5 10 11l4 3 3.5-5.5"/></svg>
+			<span>Routes</span>
+		</button>
+		<button class="tab" data-tab="checkins" role="tab">
+			<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h6"/></svg>
+			<span>Check-ins</span>
+			<em class="badge hidden" id="checkin-count"></em>
+		</button>
+		<button class="tab" data-tab="profile" role="tab">
+			<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+			<span>Profile</span>
+		</button>
+	</nav>
+
+	<div class="sheet hidden" id="sheet" role="dialog" aria-modal="true">
+		<div class="sheet-card">
+			<div class="sheet-handle" aria-hidden="true"></div>
+			<div class="sheet-title" id="sheet-title"></div>
+			<div id="sheet-body"></div>
+		</div>
+	</div>
+	<div class="toast hidden" id="toast" role="status"></div>
+	<div class="busy hidden" id="busy"><div class="busy-card"><div class="spinner"></div><div id="busy-text"></div></div></div>
+
+	<script>window.frappe = window.frappe || {};</script>
+	<!-- csrf_token -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+	<script src="/assets/routemitra/js/field_app.js?v={{ version }}"></script>
+{% endif %}
+</body>
+</html>

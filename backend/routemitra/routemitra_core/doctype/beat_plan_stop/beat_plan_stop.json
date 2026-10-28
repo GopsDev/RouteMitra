@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "creation": "2026-09-24 17:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "customer_name",
+  "status",
+  "skip_reason",
+  "distance_km",
+  "column_break_stop",
+  "latitude",
+  "longitude",
+  "sales_visit"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "default": "Planned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Planned\nVisited\nSkipped\nMissed",
+   "description": "Missed is set overnight for stops still Planned after their day."
+  },
+  {
+   "depends_on": "eval:['Skipped','Missed'].includes(doc.status)",
+   "fieldname": "skip_reason",
+   "fieldtype": "Data",
+   "label": "Reason",
+   "description": "Why the shop wasn't visited (given by the sales person when skipping)."
+  },
+  {
+   "columns": 1,
+   "fieldname": "distance_km",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Km From Previous",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_stop",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "sales_visit",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Visit",
+   "options": "Sales Visit",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-30 16:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "RouteMitra Core",
+ "name": "Beat Plan Stop",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

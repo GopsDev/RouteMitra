@@ -1,0 +1,211 @@
+{
+ "actions": [],
+ "creation": "2026-09-24 17:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "geocoding_section",
+  "geocoding_provider",
+  "google_api_key",
+  "nominatim_url",
+  "column_break_geo",
+  "auto_geocode",
+  "default_country",
+  "map_section",
+  "default_latitude",
+  "default_longitude",
+  "default_zoom",
+  "column_break_map",
+  "checkin_radius",
+  "verification_section",
+  "require_photo",
+  "min_visit_minutes",
+  "column_break_verification",
+  "max_travel_speed_kmh",
+  "mobile_app_section",
+  "android_app_url",
+  "testing_section",
+  "use_test_location",
+  "test_latitude",
+  "test_longitude"
+ ],
+ "fields": [
+  {
+   "fieldname": "geocoding_section",
+   "fieldtype": "Section Break",
+   "label": "Geocoding"
+  },
+  {
+   "default": "OpenStreetMap",
+   "description": "OpenStreetMap (Nominatim) is free but limited to about 1 lookup per second. Google needs an API key with the Geocoding API enabled.",
+   "fieldname": "geocoding_provider",
+   "fieldtype": "Select",
+   "label": "Geocoding Provider",
+   "options": "OpenStreetMap\nGoogle"
+  },
+  {
+   "depends_on": "eval:doc.geocoding_provider=='Google'",
+   "fieldname": "google_api_key",
+   "fieldtype": "Password",
+   "label": "Google Maps API Key"
+  },
+  {
+   "default": "https://nominatim.openstreetmap.org",
+   "depends_on": "eval:doc.geocoding_provider=='OpenStreetMap'",
+   "description": "Change this if you run your own Nominatim server.",
+   "fieldname": "nominatim_url",
+   "fieldtype": "Data",
+   "label": "Nominatim URL"
+  },
+  {
+   "fieldname": "column_break_geo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Look up the location whenever an Address is created or its lines, city or PIN code change.",
+   "fieldname": "auto_geocode",
+   "fieldtype": "Check",
+   "label": "Geocode Addresses Automatically"
+  },
+  {
+   "default": "India",
+   "fieldname": "default_country",
+   "fieldtype": "Link",
+   "label": "Default Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "map_section",
+   "fieldtype": "Section Break",
+   "label": "Map and Visits"
+  },
+  {
+   "default": "8.1833",
+   "fieldname": "default_latitude",
+   "fieldtype": "Float",
+   "label": "Default Map Latitude",
+   "precision": "6"
+  },
+  {
+   "default": "77.4119",
+   "fieldname": "default_longitude",
+   "fieldtype": "Float",
+   "label": "Default Map Longitude",
+   "precision": "6"
+  },
+  {
+   "default": "12",
+   "fieldname": "default_zoom",
+   "fieldtype": "Int",
+   "label": "Default Zoom"
+  },
+  {
+   "fieldname": "column_break_map",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "150",
+   "description": "A visit counts as verified when the rep checks in within this distance of the customer.",
+   "fieldname": "checkin_radius",
+   "fieldtype": "Int",
+   "label": "Check-in Radius (m)"
+  },
+  {
+   "fieldname": "verification_section",
+   "fieldtype": "Section Break",
+   "label": "Visit Verification"
+  },
+  {
+   "default": "1",
+   "description": "The rep must take a photo with the phone camera when checking in.",
+   "fieldname": "require_photo",
+   "fieldtype": "Check",
+   "label": "Require Shop Photo at Check-in"
+  },
+  {
+   "default": "5",
+   "description": "Visits shorter than this, from check-in to check-out, are flagged.",
+   "fieldname": "min_visit_minutes",
+   "fieldtype": "Int",
+   "label": "Minimum Visit Length (minutes)"
+  },
+  {
+   "fieldname": "column_break_verification",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "80",
+   "description": "Flag a check-in if the rep would have had to travel faster than this since their previous visit.",
+   "fieldname": "max_travel_speed_kmh",
+   "fieldtype": "Int",
+   "label": "Maximum Travel Speed (km/h)"
+  },
+  {
+   "fieldname": "mobile_app_section",
+   "fieldtype": "Section Break",
+   "label": "Mobile App"
+  },
+  {
+   "fieldname": "android_app_url",
+   "fieldtype": "Data",
+   "label": "Android App Download Link",
+   "options": "URL",
+   "description": "Where reps download the RouteMitra app (APK or Play Store link). Reps who open RouteMitra on a laptop are shown this link and a QR code to scan with their phone."
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "testing_section",
+   "fieldtype": "Section Break",
+   "label": "Testing"
+  },
+  {
+   "default": "0",
+   "description": "Developer mode only. The mobile page's Nearby tab and check-in use the position below instead of the browser's, as if it were a real GPS fix. For testing on a laptop without GPS. Reload the page after changing it.",
+   "fieldname": "use_test_location",
+   "fieldtype": "Check",
+   "label": "Use Test Location"
+  },
+  {
+   "depends_on": "use_test_location",
+   "fieldname": "test_latitude",
+   "fieldtype": "Float",
+   "label": "Test Latitude",
+   "mandatory_depends_on": "use_test_location",
+   "precision": "6"
+  },
+  {
+   "depends_on": "use_test_location",
+   "fieldname": "test_longitude",
+   "fieldtype": "Float",
+   "label": "Test Longitude",
+   "mandatory_depends_on": "use_test_location",
+   "precision": "6"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-08 13:33:24.990260",
+ "modified_by": "Administrator",
+ "module": "RouteMitra Core",
+ "name": "RouteMitra Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

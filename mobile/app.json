@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "RouteMitra",
+    "slug": "routemitra",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.gopal.routemitra"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.gopal.routemitra"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "RouteMitra uses your location to verify shop visits at check-in and check-out."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "RouteMitra takes a photo of the shop front at check-in.",
+          "recordAudioAndroid": false
+        }
+      ],
+      "expo-image"
+    ]
+  }
+}
